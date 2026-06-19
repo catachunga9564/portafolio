@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue-50:#E6F1FB;--blue-200:#85B7EB;--blue-600:#185FA5;--blue-800:#0C447C;
+    --gray-50:#F1EFE8;--gray-100:#D3D1C7;--gray-400:#888780;--gray-600:#5F5E5A;--gray-800:#444441;
+    --teal-50:#E1F5EE;--teal-200:#5DCAA5;--teal-600:#0F6E56;--teal-800:#085041;
+    --amber-50:#FAEEDA;--amber-200:#FAC775;--amber-600:#854F0B;--amber-800:#633806;
+    --purple-50:#EEEDFE;--purple-200:#AFA9EC;--purple-600:#534AB7;--purple-800:#3C3489;
+    --green-50:#EAF3DE;--green-600:#3B6D11;--green-800:#27500A;
+    --coral-50:#FAECE7;--coral-600:#993C1D;--coral-800:#712B13;
+    --ease: cubic-bezier(.4,0,.2,1);
+  }
+
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#fff; color:var(--gray-800); line-height:1.6; max-width:900px; margin:0 auto; }
+
+  /* SCROLL PROGRESS */
+  #progress-bar { position:fixed; top:0; left:0; height:2px; width:0; background:linear-gradient(90deg,var(--blue-600),var(--blue-200)); z-index:200; transition:width .1s linear; pointer-events:none; }
+
+  /* NAV */
+  nav { display:flex; align-items:center; justify-content:space-between; padding:1rem 2rem; border-bottom:0.5px solid var(--gray-100); position:sticky; top:0; background:rgba(255,255,255,.93); backdrop-filter:blur(10px); z-index:100; }
+  .nav-logo { font-size:14px; font-weight:500; }
+  .nav-links { display:flex; gap:1.5rem; }
+  .nav-links a { font-size:13px; color:var(--gray-600); text-decoration:none; cursor:pointer; position:relative; padding-bottom:2px; transition:color .2s var(--ease); }
+  .nav-links a::after { content:''; position:absolute; bottom:0; left:0; width:0; height:1.5px; background:var(--blue-600); border-radius:1px; transition:width .22s var(--ease); }
+  .nav-links a:hover, .nav-links a.active { color:var(--blue-600); }
+  .nav-links a:hover::after, .nav-links a.active::after { width:100%; }
+  .nav-toggle { display:none; background:none; border:none; cursor:pointer; padding:2px; color:var(--gray-600); font-size:20px; line-height:1; }
+
+  /* SECTIONS */
+  section { padding:2.5rem 2rem; border-bottom:0.5px solid var(--gray-100); }
+  .hero { padding:3.5rem 2rem 2.5rem; }
+
+  /* HERO */
+  .hero-inner { display:grid; grid-template-columns:1fr 140px; gap:2rem; align-items:center; }
+  .hero-tag { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; color:var(--blue-600); background:var(--blue-50); padding:4px 12px; border-radius:20px; margin-bottom:1rem; }
+  .hero h1 { font-size:28px; font-weight:500; margin-bottom:.3rem; }
+  .hero h1 span { color:var(--blue-600); }
+  .hero-sub { font-size:14px; color:var(--gray-600); font-weight:500; margin-bottom:.75rem; min-height:1.5em; }
+  .cursor { display:inline-block; width:2px; height:.9em; background:var(--blue-600); margin-left:2px; vertical-align:middle; animation:blink .7s step-end infinite; }
+  @keyframes blink { 50%{opacity:0} }
+  .hero p { font-size:14px; color:var(--gray-600); margin-bottom:1.5rem; line-height:1.75; }
+  .hero-actions { display:flex; gap:10px; flex-wrap:wrap; }
+
+  /* BUTTONS */
+  .btn-primary { display:inline-flex; align-items:center; gap:6px; background:var(--blue-600); color:#fff; font-size:13px; font-weight:500; padding:8px 16px; border-radius:8px; border:none; cursor:pointer; text-decoration:none; transition:background .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease); }
+  .btn-primary:hover { background:var(--blue-800); transform:translateY(-1px); box-shadow:0 4px 14px rgba(24,95,165,.28); }
+  .btn-secondary { display:inline-flex; align-items:center; gap:6px; background:transparent; color:var(--gray-600); font-size:13px; padding:8px 14px; border-radius:8px; border:0.5px solid var(--gray-100); cursor:pointer; text-decoration:none; transition:border-color .2s, color .2s, transform .2s var(--ease); }
+  .btn-secondary:hover { border-color:var(--gray-600); color:var(--gray-800); transform:translateY(-1px); }
+
+  /* PROFILE */
+  .profile-photo { width:130px; height:130px; border-radius:12px; object-fit:cover; border:0.5px solid var(--gray-100); display:block; transition:transform .3s var(--ease), box-shadow .3s var(--ease); }
+  .profile-photo:hover { transform:scale(1.04); box-shadow:0 10px 28px rgba(0,0,0,.13); }
+  .profile-photo-placeholder { width:130px; height:130px; border-radius:12px; background:var(--gray-50); border:0.5px dashed var(--gray-100); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--gray-400); font-size:11px; text-align:center; }
+
+  /* SECTION TITLES */
+  .section-title { font-size:11px; font-weight:500; letter-spacing:.08em; color:var(--gray-600); text-transform:uppercase; margin-bottom:1.5rem; }
+  .subsection-label { font-size:11px; color:var(--gray-600); font-weight:500; margin-bottom:.6rem; }
+
+  /* SKILLS */
+  .skills-block { margin-bottom:1.25rem; }
+  .skills-grid { display:flex; flex-wrap:wrap; gap:8px; }
+  .skill-badge { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; padding:5px 12px; border-radius:6px; border:0.5px solid transparent; transition:transform .2s var(--ease), box-shadow .2s var(--ease); cursor:default; }
+  .skill-badge:hover { transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,.09); }
+  .skill-badge i { font-size:14px; }
+  .badge-blue   { background:var(--blue-50);   color:var(--blue-800);   border-color:var(--blue-200); }
+  .badge-teal   { background:var(--teal-50);   color:var(--teal-800);   border-color:var(--teal-200); }
+  .badge-amber  { background:var(--amber-50);  color:var(--amber-800);  border-color:var(--amber-200); }
+  .badge-purple { background:var(--purple-50); color:var(--purple-800); border-color:var(--purple-200); }
+  .badge-green  { background:var(--green-50);  color:var(--green-800); }
+  .badge-coral  { background:var(--coral-50);  color:var(--coral-800); }
+  .badge-gray   { background:var(--gray-50);   color:var(--gray-600);   border-color:var(--gray-100); }
+
+  /* PROJECTS */
+  .filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:1.25rem; }
+  .filter-btn { font-size:12px; padding:4px 14px; border-radius:20px; border:0.5px solid var(--gray-100); background:transparent; color:var(--gray-600); cursor:pointer; transition:all .2s var(--ease); }
+  .filter-btn.active { background:var(--blue-600); color:#fff; border-color:var(--blue-600); }
+  .filter-btn:hover:not(.active) { border-color:var(--blue-200); color:var(--blue-600); }
+  .projects-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem; }
+  .project-card { border:0.5px solid var(--gray-100); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; transition:border-color .2s, transform .25s var(--ease), box-shadow .25s var(--ease), opacity .28s, scale .28s; }
+  .project-card:hover { border-color:var(--blue-200); transform:translateY(-4px); box-shadow:0 10px 28px rgba(24,95,165,.11); }
+  .project-card.featured { border-color:var(--blue-200); border-width:1.5px; }
+  .project-card.hiding { opacity:0; scale:.95; pointer-events:none; }
+
+  /* PROJECT IMAGES */
+  .project-img-wrap { width:100%; height:160px; overflow:hidden; background:var(--gray-50); position:relative; }
+  .project-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .45s var(--ease); }
+  .project-card:hover .project-img-wrap img { transform:scale(1.06); }
+  .project-img-placeholder { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:var(--gray-400); font-size:12px; }
+  .project-img-placeholder i { font-size:28px; }
+  .featured-label { position:absolute; top:10px; left:10px; font-size:10px; padding:3px 10px; border-radius:4px; background:var(--blue-600); color:#fff; font-weight:500; }
+  .badge-real-img { position:absolute; top:10px; right:10px; font-size:10px; padding:3px 8px; border-radius:4px; background:var(--teal-50); color:var(--teal-800); font-weight:500; border:0.5px solid var(--teal-200); }
+
+  .project-body { padding:1rem 1.1rem; display:flex; flex-direction:column; gap:.65rem; flex:1; }
+  .project-title { font-size:14px; font-weight:500; color:var(--gray-800); margin-bottom:2px; }
+  .project-type { font-size:11px; color:var(--gray-600); }
+  .project-desc { font-size:13px; color:var(--gray-600); line-height:1.65; flex:1; }
+  .project-footer { display:flex; flex-wrap:wrap; gap:6px; }
+  .tech-tag { font-size:11px; padding:2px 8px; border-radius:4px; background:var(--gray-50); color:var(--gray-600); border:0.5px solid var(--gray-100); transition:background .2s, color .2s, border-color .2s; }
+  .tech-tag:hover { background:var(--blue-50); color:var(--blue-800); border-color:var(--blue-200); }
+  .project-links { display:flex; gap:8px; flex-wrap:wrap; padding-bottom:.25rem; }
+  .project-link { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--blue-600); text-decoration:none; padding:3px 10px; border-radius:5px; border:0.5px solid var(--blue-200); background:var(--blue-50); transition:all .2s var(--ease); }
+  .project-link:hover { background:var(--blue-600); color:#fff; border-color:var(--blue-600); transform:translateY(-1px); }
+  .project-link i { font-size:13px; }
+
+  /* EXPERIENCE */
+  .exp-list { display:flex; flex-direction:column; gap:1.5rem; }
+  .exp-item { display:grid; grid-template-columns:120px 1fr; gap:1rem; }
+  .exp-date { font-size:11px; color:var(--gray-400); padding-top:3px; }
+  .exp-role { font-size:14px; font-weight:500; color:var(--gray-800); margin-bottom:2px; }
+  .exp-company { font-size:13px; color:var(--blue-600); margin-bottom:.5rem; }
+  .exp-bullets { list-style:none; padding:0; }
+  .exp-bullets li { font-size:13px; color:var(--gray-600); line-height:1.6; padding-left:1rem; position:relative; margin-bottom:3px; }
+  .exp-bullets li::before { content:"·"; position:absolute; left:0; color:var(--gray-400); }
+
+  /* EDUCATION */
+  .edu-list { display:flex; flex-direction:column; gap:1rem; }
+  .edu-item { display:flex; align-items:flex-start; gap:12px; padding:.75rem 1rem; background:var(--gray-50); border-radius:8px; transition:background .2s, transform .2s var(--ease); }
+  .edu-item:hover { background:var(--blue-50); transform:translateX(4px); }
+  .edu-icon { font-size:18px; color:var(--blue-600); margin-top:2px; }
+  .edu-degree { font-size:14px; font-weight:500; color:var(--gray-800); margin-bottom:2px; }
+  .edu-school { font-size:13px; color:var(--gray-600); }
+  .edu-year { font-size:11px; color:var(--gray-400); margin-top:2px; }
+
+  /* CONTACT */
+  .contact-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1rem; }
+  .contact-card { flex:1; min-width:150px; display:flex; align-items:center; gap:12px; padding:1rem 1.25rem; border:0.5px solid var(--gray-100); border-radius:10px; text-decoration:none; transition:border-color .2s, transform .2s var(--ease), box-shadow .2s var(--ease); }
+  .contact-card:hover { border-color:var(--blue-200); transform:translateY(-2px); box-shadow:0 4px 14px rgba(24,95,165,.1); }
+  .contact-icon { font-size:20px; color:var(--blue-600); }
+  .contact-label { font-size:11px; color:var(--gray-600); margin-bottom:2px; }
+  .contact-value { font-size:13px; font-weight:500; color:var(--gray-800); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* SCROLL-IN ANIMATIONS */
+  [data-anim] { opacity:0; transform:translateY(18px); transition:opacity .5s var(--ease), transform .5s var(--ease); }
+  [data-anim].in { opacity:1; transform:translateY(0); }
+
+  /* BACK TO TOP */
+  #back-top { position:fixed; bottom:24px; right:24px; width:36px; height:36px; border-radius:50%; background:var(--blue-600); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; opacity:0; pointer-events:none; transition:opacity .25s, transform .2s var(--ease), box-shadow .2s; box-shadow:0 4px 12px rgba(24,95,165,.3); z-index:50; }
+  #back-top.show { opacity:1; pointer-events:all; }
+  #back-top:hover { background:var(--blue-800); transform:translateY(-2px); }
+
+  @media(max-width:600px){
+    .hero-inner { grid-template-columns:1fr; }
+    .profile-photo, .profile-photo-placeholder { width:90px; height:90px; order:-1; }
+    .exp-item { grid-template-columns:1fr; }
+    nav { padding:1rem; flex-wrap:wrap; }
+    section, .hero { padding:2rem 1rem; }
+    .nav-toggle { display:block; }
+    .nav-links { display:none; width:100%; flex-direction:column; gap:.75rem; padding:.5rem 0 .25rem; order:3; }
+    .nav-links.open { display:flex; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav>
+  <span class="nav-logo">Camilo Catachunga <span style="color:var(--blue-600)">·</span> Ing. Electrónico & Dev</span>
+  <button class="nav-toggle" onclick="toggleMobileNav()" aria-label="Menú">
+    <i class="ti ti-menu-2" id="navIcon"></i>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a data-sec="skills"     onclick="navGo('skills')">Habilidades</a>
+    <a data-sec="projects"   onclick="navGo('projects')">Proyectos</a>
+    <a data-sec="experience" onclick="navGo('experience')">Experiencia</a>
+    <a data-sec="contact"    onclick="navGo('contact')">Contacto</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag" data-anim><i class="ti ti-cpu" aria-hidden="true"></i> Ingeniero Electrónico · Software & IoT</div>
+      <h1 data-anim style="transition-delay:.08s">Camilo <span>Catachunga Lugo</span></h1>
+      <div class="hero-sub" id="heroSub"><span class="cursor"></span></div>
+      <p data-anim style="transition-delay:.16s">Ingeniero Electrónico con experiencia en diseño de productos electrónicos, sistemas IoT, automatización y desarrollo web. He construido plataformas full stack, interfaces industriales con protocolos Modbus RTU y modelos de análisis de datos con Python. Me muevo con comodidad entre el hardware y el software.</p>
+      <div class="hero-actions" data-anim style="transition-delay:.24s">
+        <a class="btn-primary" href="mailto:ccatachungalugo@gmail.com">
+          <i class="ti ti-mail" aria-hidden="true"></i> Contactar
+        </a>
+        <a class="btn-secondary" href="https://github.com/catachunga9564" target="_blank">
+          <i class="ti ti-brand-github" aria-hidden="true"></i> GitHub
+        </a>
+        <a class="btn-secondary" href="https://www.linkedin.com/in/camilo-catachunga-lugo-5034611bb/" target="_blank">
+          <i class="ti ti-brand-linkedin" aria-hidden="true"></i> LinkedIn
+        </a>
+      </div>
+    </div>
+    <img src="fotoperfil.jpg" alt="Camilo Catachunga" class="profile-photo"
+         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+         data-anim style="transition-delay:.1s">
+    <div class="profile-photo-placeholder" style="display:none;">
+      <i class="ti ti-user" aria-hidden="true" style="font-size:32px;"></i>
+      <span>fotoperfil.png</span>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-title" data-anim>Habilidades técnicas</div>
+  <div class="skills-block" data-anim style="transition-delay:.06s">
+    <div class="subsection-label">Desarrollo web y frontend</div>
+    <div class="skills-grid">
+      <span class="skill-badge badge-blue"><i class="ti ti-brand-html5" aria-hidden="true"></i>HTML / CSS</span>
+      <span class="skill-badge badge-amber"><i class="ti ti-brand-javascript" aria-hidden="true"></i>JavaScript</span>
+      <span class="skill-badge badge-blue"><i class="ti ti-brand-react" aria-hidden="true"></i>React JS</span>
+      <span class="skill-badge badge-purple"><i class="ti ti-brand-bootstrap" aria-hidden="true"></i>Bootstrap</span>
+    </div>
+  </div>
+  <div class="skills-block" data-anim style="transition-delay:.12s">
+    <div class="subsection-label">Backend y datos</div>
+    <div class="skills-grid">
+      <span class="skill-badge badge-teal"><i class="ti ti-server" aria-hidden="true"></i>PHP</span>
+      <span class="skill-badge badge-green"><i class="ti ti-brand-python" aria-hidden="true"></i>Python</span>
+      <span class="skill-badge badge-coral"><i class="ti ti-brand-nodejs" aria-hidden="true"></i>Node.js</span>
+      <span class="skill-badge badge-green"><i class="ti ti-chart-line" aria-hidden="true"></i>ARIMA / SARIMA</span>
+      <span class="skill-badge badge-gray"><i class="ti ti-code" aria-hidden="true"></i>C / Java</span>
+    </div>
+  </div>
+  <div class="skills-block" data-anim style="transition-delay:.18s">
+    <div class="subsection-label">Bases de datos e infraestructura</div>
+    <div class="skills-grid">
+      <span class="skill-badge badge-blue"><i class="ti ti-database" aria-hidden="true"></i>SQL Server</span>
+      <span class="skill-badge badge-teal"><i class="ti ti-database" aria-hidden="true"></i>MariaDB · SQLite</span>
+      <span class="skill-badge badge-amber"><i class="ti ti-brand-firebase" aria-hidden="true"></i>Firebase</span>
+      <span class="skill-badge badge-purple"><i class="ti ti-server-2" aria-hidden="true"></i>Apache</span>
+    </div>
+  </div>
+  <div class="skills-block" data-anim style="transition-delay:.24s">
+    <div class="subsection-label">Sistemas embebidos, protocolos y herramientas</div>
+    <div class="skills-grid">
+      <span class="skill-badge badge-coral"><i class="ti ti-cpu" aria-hidden="true"></i>ESP32 / Microcontroladores</span>
+      <span class="skill-badge badge-green"><i class="ti ti-plug-connected" aria-hidden="true"></i>Modbus RTU</span>
+      <span class="skill-badge badge-gray"><i class="ti ti-plug-connected" aria-hidden="true"></i>RS232 / RS422 / RS485</span>
+      <span class="skill-badge badge-teal"><i class="ti ti-device-desktop" aria-hidden="true"></i>Linux</span>
+      <span class="skill-badge badge-gray"><i class="ti ti-brand-git" aria-hidden="true"></i>Git</span>
+      <span class="skill-badge badge-blue"><i class="ti ti-topology-star" aria-hidden="true"></i>Jira</span>
+      <span class="skill-badge badge-amber"><i class="ti ti-chart-bar" aria-hidden="true"></i>Power BI</span>
+      <span class="skill-badge badge-gray"><i class="ti ti-tool" aria-hidden="true"></i>Eagle · MATLAB</span>
+    </div>
+  </div>
+  <div class="skills-block" data-anim style="transition-delay:.3s">
+    <div class="subsection-label">Idiomas</div>
+    <div class="skills-grid">
+      <span class="skill-badge badge-blue"><i class="ti ti-message-language" aria-hidden="true"></i>Inglés A2</span>
+      <span class="skill-badge badge-amber"><i class="ti ti-flag" aria-hidden="true"></i>Español (Nativo)</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-title" data-anim>Proyectos de software</div>
+  <div class="filter-bar" data-anim style="transition-delay:.06s">
+    <button class="filter-btn active" onclick="filterProjects('all',this)">Todos</button>
+    <button class="filter-btn" onclick="filterProjects('web',this)">Web / Firebase</button>
+    <button class="filter-btn" onclick="filterProjects('python',this)">Python / Datos</button>
+    <button class="filter-btn" onclick="filterProjects('embebido',this)">Embebidos / IoT</button>
+  </div>
+  <div class="projects-grid" id="projectsGrid">
+
+    <!-- PROYECTO 1 -->
+    <div class="project-card featured" data-cat="web python" data-anim style="transition-delay:.08s">
+      <div class="project-img-wrap">
+        <img src="imgproyecto1.jpg" alt="Plataforma de Fototrampeo"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="project-img-placeholder" style="display:none;">
+          <i class="ti ti-camera" aria-hidden="true"></i>
+          <span>imgproyecto1.png</span>
+        </div>
+        <span class="featured-label">Proyecto de grado</span>
+        <span class="badge-real-img">Real</span>
+      </div>
+      <div class="project-body">
+        <div>
+          <div class="project-title">Plataforma de fototrampeo para monitoreo de fauna</div>
+          <div class="project-type">Plataforma web full stack · IoT · Biodiversidad</div>
+        </div>
+        <div class="project-desc">Plataforma tecnológica para monitoreo de fauna silvestre mediante cámaras trampa. Incluye backend y frontend completos, procesamiento de imágenes con Python y sincronización con Firebase para gestión de datos en tiempo real.</div>
+        <div class="project-footer">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Firebase</span>
+          <span class="tech-tag">HTML/CSS/JS</span>
+          <span class="tech-tag">Backend</span>
+        </div>
+        <div class="project-links">
+          <a class="project-link" href="#"><i class="ti ti-brand-github" aria-hidden="true"></i>Código</a>
+          <a class="project-link" href="#"><i class="ti ti-file-description" aria-hidden="true"></i>Documento</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROYECTO 2 -->
+    <div class="project-card" data-cat="python embebido" data-anim style="transition-delay:.14s">
+      <div class="project-img-wrap">
+        <img src="imgproyecto2.jpg" alt="Interfaz Modbus RTU VAISALA"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="project-img-placeholder" style="display:none;">
+          <i class="ti ti-temperature" aria-hidden="true"></i>
+          <span>imgproyecto2.png</span>
+        </div>
+        <span class="badge-real-img">Real</span>
+      </div>
+      <div class="project-body">
+        <div>
+          <div class="project-title">Interfaz Modbus RTU — sensores VAISALA</div>
+          <div class="project-type">Aplicación de escritorio · Linux · Industrial</div>
+        </div>
+        <div class="project-desc">Aplicación de escritorio en Linux para lectura de sensores de temperatura VAISALA por protocolo Modbus RTU. Los datos se almacenan en SQLite para trazabilidad y análisis histórico.</div>
+        <div class="project-footer">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Modbus RTU</span>
+          <span class="tech-tag">SQLite</span>
+          <span class="tech-tag">Linux</span>
+        </div>
+        <div class="project-links">
+          <a class="project-link" href="#"><i class="ti ti-brand-github" aria-hidden="true"></i>Código</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROYECTO 3 -->
+    <div class="project-card" data-cat="web embebido" data-anim style="transition-delay:.2s">
+      <div class="project-img-wrap">
+        <img src="imgproyecto3.jpg" alt="Monitoreo consumo eléctrico ESP32"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="project-img-placeholder" style="display:none;">
+          <i class="ti ti-bolt" aria-hidden="true"></i>
+          <span>imgproyecto3.png</span>
+        </div>
+        <span class="badge-real-img">Real</span>
+      </div>
+      <div class="project-body">
+        <div>
+          <div class="project-title">Monitoreo de consumo eléctrico con ESP32</div>
+          <div class="project-type">IoT · Web · Domótica</div>
+        </div>
+        <div class="project-desc">Sistema inteligente para monitoreo de potencia en electrodomésticos del hogar. El ESP32 publica mediciones a un servidor PHP sobre Apache, con persistencia en MariaDB y dashboard en tiempo real.</div>
+        <div class="project-footer">
+          <span class="tech-tag">ESP32</span>
+          <span class="tech-tag">PHP</span>
+          <span class="tech-tag">MariaDB</span>
+          <span class="tech-tag">Apache</span>
+        </div>
+        <div class="project-links">
+          <a class="project-link" href="#"><i class="ti ti-brand-github" aria-hidden="true"></i>Código</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROYECTO 4 -->
+    <div class="project-card" data-cat="python" data-anim style="transition-delay:.26s">
+      <div class="project-img-wrap">
+        <img src="imgproyecto4.jpg" alt="Modelo predictivo ARIMA SARIMA"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="project-img-placeholder" style="display:none;">
+          <i class="ti ti-chart-line" aria-hidden="true"></i>
+          <span>imgproyecto4.png</span>
+        </div>
+        <span class="badge-real-img">Real</span>
+      </div>
+      <div class="project-body">
+        <div>
+          <div class="project-title">Modelo predictivo ARIMA / SARIMA</div>
+          <div class="project-type">Análisis de datos · Series de tiempo</div>
+        </div>
+        <div class="project-desc">Análisis de series de tiempo con Python para predicción de temperatura y humedad relativa. Se compararon modelos ARIMA y SARIMA evaluando métricas de error con visualizaciones de ajuste y proyección.</div>
+        <div class="project-footer">
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">ARIMA</span>
+          <span class="tech-tag">SARIMA</span>
+          <span class="tech-tag">pandas</span>
+          <span class="tech-tag">statsmodels</span>
+        </div>
+        <div class="project-links">
+          <a class="project-link" href="#"><i class="ti ti-brand-github" aria-hidden="true"></i>Código</a>
+          <a class="project-link" href="#"><i class="ti ti-notebook" aria-hidden="true"></i>Notebook</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROYECTO 5 -->
+    <div class="project-card" data-cat="web embebido" data-anim style="transition-delay:.32s">
+      <div class="project-img-wrap">
+        <img src="imgproyecto5.jpg" alt="Dashboard web sistema embebido"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="project-img-placeholder" style="display:none;">
+          <i class="ti ti-dashboard" aria-hidden="true"></i>
+          <span>imgproyecto5.png</span>
+        </div>
+        <span class="badge-real-img">Real</span>
+      </div>
+      <div class="project-body">
+        <div>
+          <div class="project-title">Dashboard web para sistema embebido</div>
+          <div class="project-type">Web · IoT · Firebase</div>
+        </div>
+        <div class="project-desc">Interfaz web con Firebase para visualización en tiempo real de temperatura, humedad, calidad de aire, presión y altitud capturadas desde un sistema embebido, con gráficas interactivas por variable.</div>
+        <div class="project-footer">
+          <span class="tech-tag">HTML/CSS/JS</span>
+          <span class="tech-tag">Firebase</span>
+          <span class="tech-tag">Gráficas RT</span>
+          <span class="tech-tag">Embebido</span>
+        </div>
+        <div class="project-links">
+          <a class="project-link" href="#"><i class="ti ti-brand-github" aria-hidden="true"></i>Código</a>
+          <a class="project-link" href="#"><i class="ti ti-external-link" aria-hidden="true"></i>Demo</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-title" data-anim>Experiencia laboral</div>
+  <div class="exp-list">
+    <div class="exp-item" data-anim style="transition-delay:.06s">
+      <div class="exp-date">03/2026 — actual</div>
+      <div>
+        <div class="exp-role">Técnico Junior de Proyectos</div>
+        <div class="exp-company">INTERPESAJE SAS · Cali</div>
+        <ul class="exp-bullets">
+          <li>Instalación, mantenimiento y automatización de sistemas de pesaje en el sector industrial.</li>
+          <li>Configuración e integración de sistemas RS232, RS422, RS485 y Ethernet.</li>
+          <li>Elaboración de reportes de servicio, protocolos de verificación e informes técnicos.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="exp-item" data-anim style="transition-delay:.12s">
+      <div class="exp-date">03/2025 — 07/2025</div>
+      <div>
+        <div class="exp-role">Aprendiz de Ingeniería</div>
+        <div class="exp-company">MM Packaging Colombia · Yumbo</div>
+        <ul class="exp-bullets">
+          <li>Coordinación de mantenimiento preventivo y correctivo bajo metodología TPM en equipo de 9 personas.</li>
+          <li>Implementación de indicadores MTTR, MTBF y disponibilidad para medir eficiencia del mantenimiento.</li>
+          <li>Reducción de solicitudes correctivas mediante mejor planificación preventiva.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="exp-item" data-anim style="transition-delay:.18s">
+      <div class="exp-date">11/2022 — 12/2024</div>
+      <div>
+        <div class="exp-role">Auxiliar de Laboratorio</div>
+        <div class="exp-company">Universidad Autónoma de Occidente · Cali</div>
+        <ul class="exp-bullets">
+          <li>Soporte a estudiantes en prácticas de Física y mantenimiento de equipos.</li>
+          <li>Gestión de suministros y organización de espacios de laboratorio.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="exp-item" data-anim style="transition-delay:.24s">
+      <div class="exp-date">10/2020 — 11/2022</div>
+      <div>
+        <div class="exp-role">Soporte Técnico (hardware y software)</div>
+        <div class="exp-company">Inffinity S.A.S. · Cali</div>
+        <ul class="exp-bullets">
+          <li>Ensamble y configuración de sistemas embebidos con Linux.</li>
+          <li>Soporte técnico remoto y en campo para clientes comerciales.</li>
+          <li>Implementación de sistemas de analítica de visitantes en entornos comerciales.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-title" data-anim>Formación</div>
+  <div class="edu-list">
+    <div class="edu-item" data-anim style="transition-delay:.06s">
+      <i class="ti ti-school edu-icon" aria-hidden="true"></i>
+      <div>
+        <div class="edu-degree">Ingeniero en Electrónica</div>
+        <div class="edu-school">Institución Universitaria Antonio José Camacho · Cali</div>
+        <div class="edu-year">2026</div>
+      </div>
+    </div>
+    <div class="edu-item" data-anim style="transition-delay:.12s">
+      <i class="ti ti-school edu-icon" aria-hidden="true"></i>
+      <div>
+        <div class="edu-degree">Tecnólogo en Electrónica</div>
+        <div class="edu-school">Universidad del Valle · Cali</div>
+        <div class="edu-year">2021</div>
+      </div>
+    </div>
+    <div class="edu-item" data-anim style="transition-delay:.18s">
+      <i class="ti ti-certificate edu-icon" aria-hidden="true"></i>
+      <div>
+        <div class="edu-degree">Técnico en Instalaciones Eléctricas Residenciales</div>
+        <div class="edu-school">SENA · Cali</div>
+        <div class="edu-year">2015</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-title" data-anim>Contacto</div>
+  <div class="contact-row">
+    <a class="contact-card" href="mailto:ccatachungalugo@gmail.com" data-anim style="transition-delay:.06s">
+      <i class="ti ti-mail contact-icon" aria-hidden="true"></i>
+      <div><div class="contact-label">Email</div><div class="contact-value">ccatachungalugo@gmail.com</div></div>
+    </a>
+    <a class="contact-card" href="tel:+573158603702" data-anim style="transition-delay:.12s">
+      <i class="ti ti-phone contact-icon" aria-hidden="true"></i>
+      <div><div class="contact-label">Teléfono</div><div class="contact-value">+57 315 860 3702</div></div>
+    </a>
+    <a class="contact-card" href="https://www.linkedin.com/in/camilo-catachunga-lugo-5034611bb/" target="_blank" data-anim style="transition-delay:.18s">
+      <i class="ti ti-brand-linkedin contact-icon" aria-hidden="true"></i>
+      <div><div class="contact-label">LinkedIn</div><div class="contact-value">Camilo Catachunga Lugo</div></div>
+    </a>
+    <a class="contact-card" href="https://github.com/catachunga9564" target="_blank" data-anim style="transition-delay:.24s">
+      <i class="ti ti-brand-github contact-icon" aria-hidden="true"></i>
+      <div><div class="contact-label">GitHub</div><div class="contact-value">catachunga9564</div></div>
+    </a>
+  </div>
+</section>
+
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">
+  <i class="ti ti-arrow-up"></i>
+</button>
+
+<script>
+  // SCROLL PROGRESS + BACK-TO-TOP + ACTIVE NAV
+  const progressBar = document.getElementById('progress-bar');
+  const backTop     = document.getElementById('back-top');
+  const secIds      = ['hero','skills','projects','experience','education','contact'];
+  const navLinks    = document.querySelectorAll('.nav-links a[data-sec]');
+
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total    = document.body.scrollHeight - window.innerHeight;
+    progressBar.style.width = (scrolled / total * 100) + '%';
+    backTop.classList.toggle('show', scrolled > 300);
+
+    let current = secIds[0];
+    for (const id of secIds) {
+      const el = document.getElementById(id);
+      if (el && scrolled >= el.offsetTop - 140) current = id;
+    }
+    navLinks.forEach(a => a.classList.toggle('active', a.dataset.sec === current));
+  }, { passive: true });
+
+  // SCROLL-IN ANIMATIONS (Intersection Observer)
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('[data-anim]').forEach(el => io.observe(el));
+
+  // TYPEWRITER EFFECT
+  const texts = ['Ing. Electrónico', 'Desarrollador Full Stack', 'IoT & Sistemas Embebidos', 'Python & Análisis de Datos'];
+  const subEl = document.getElementById('heroSub');
+  let ti = 0, ci = 0, deleting = false;
+
+  function type() {
+    const word = texts[ti];
+    const shown = deleting ? word.slice(0, ci--) : word.slice(0, ci++);
+    subEl.innerHTML = shown + '<span class="cursor"></span>';
+    if (!deleting && ci > word.length) {
+      setTimeout(() => { deleting = true; type(); }, 1800);
+      return;
+    }
+    if (deleting && ci < 0) {
+      deleting = false;
+      ti = (ti + 1) % texts.length;
+      ci = 0;
+    }
+    setTimeout(type, deleting ? 45 : 75);
+  }
+  type();
+
+  // PROJECT FILTER with smooth transition
+  function filterProjects(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.project-card').forEach(card => {
+      const show = cat === 'all' || card.dataset.cat.includes(cat);
+      if (show) {
+        card.style.display = 'flex';
+        requestAnimationFrame(() => card.classList.remove('hiding'));
+      } else {
+        card.classList.add('hiding');
+        setTimeout(() => { if (card.classList.contains('hiding')) card.style.display = 'none'; }, 290);
+      }
+    });
+  }
+
+  // MOBILE NAV TOGGLE
+  function toggleMobileNav() {
+    const nl   = document.getElementById('navLinks');
+    const icon = document.getElementById('navIcon');
+    nl.classList.toggle('open');
+    icon.className = nl.classList.contains('open') ? 'ti ti-x' : 'ti ti-menu-2';
+  }
+
+  // NAV SCROLL + close mobile menu
+  function navGo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    const nl = document.getElementById('navLinks');
+    nl.classList.remove('open');
+    document.getElementById('navIcon').className = 'ti ti-menu-2';
+  }
+</script>
+</body>
+</html>
